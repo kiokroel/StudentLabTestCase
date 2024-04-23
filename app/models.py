@@ -31,7 +31,7 @@ class Form(Base):
     data_change = Column(TIMESTAMP, default=datetime.utcnow)
 
     owner = relationship("User", back_populates="forms")
-    questions = relationship("Question", back_populates="form")
+    #questions = relationship("Question", back_populates="form")
 
 
 class Question(Base):

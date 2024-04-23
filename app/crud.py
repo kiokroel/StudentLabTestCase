@@ -1,26 +1,30 @@
-import models
-import schemas
+from app import models
+from app import schemas
+from app.models import User
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 
-async def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+async def get_user(session: AsyncSession, user_id: int):
+    stmt = select(User).where(User.id == user_id)
+    result = await session.execute(stmt)
+    user: User | None = result.scalar_one_or_none()
+    return user
 
 
-async def get_user_by_email(db: Session, email: str):
-    return (await db.query(models.User).filter(models.User.email == email)).first()
+async def get_user_by_email(session: AsyncSession, email: str) -> User | None:
+    stmt = select(User).where(User.email == email)
+    result = await session.execute(stmt)
+    user: User | None = result.scalar_one_or_none()
+    return user
 
 
-async def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return (await db.query(models.User).offset(skip).limit(limit)).all()
-
-
-async def create_user(db: Session, user: schemas.UserCreate):
+async def create_user(session: AsyncSession, user: schemas.UserCreate):
     db_user = models.User(**user.model_dump())
-    db.add(db_user)
-    await db.commit()
-    await db.refresh(db_user)
-    return db_user
+    session.add(db_user)
+    await session.commit()
+    return user
 
 
 async def get_forms(db: Session, skip: int = 0, limit: int = 100):
