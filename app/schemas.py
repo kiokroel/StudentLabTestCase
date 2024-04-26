@@ -1,4 +1,20 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
+
+
+class UserBase(BaseModel):
+    email: EmailStr
+    username: str
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class User(UserBase):
+    id: int
+
+    class Config:
+        from_attributes = True
 
 
 class FieldBase(BaseModel):
@@ -21,21 +37,8 @@ class Form(FormBase):
     owner_id: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True
 
 
-class UserBase(BaseModel):
-    email: str
-    username: str
-
-
-class UserCreate(UserBase):
-    password: str
-
-
-class User(UserBase):
-    id: int
-    #forms: list[Form] = []
-
-    class Config:
-        orm_mode = True
+class FormGet(FormBase):
+    pass
