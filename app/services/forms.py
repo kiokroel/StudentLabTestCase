@@ -2,9 +2,8 @@ import json
 from typing import List
 
 from app import schemas, models
-from app.models import Form, FormField, FormAnswer, FormResponse
-from app.schemas import FormFieldBase
-from sqlalchemy import select, update, delete
+from app.models import Form, FormField, FormResponse
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
@@ -74,30 +73,6 @@ async def unpublish_form(db: AsyncSession, form_id: int):
         values(is_published=False)
     )
     await db.execute(stmt)
-
-
-async def delete_answer(db: AsyncSession, response_id: int):
-    stmt = select(FormAnswer).where(FormAnswer.response_id == response_id)
-    answers = await db.execute(stmt)
-    for answer in answers:
-        await db.delete(answer)
-    await db.commit()
-
-
-async def delete_response(db: AsyncSession, response_id: int):
-    stmt = select(FormResponse).where(FormResponse.id == response_id)
-    result = await db.execute(stmt)
-    response: FormResponse | None = result.scalar_one_or_none()
-    await db.delete(response)
-    await db.commit()
-
-
-async def delete_fields(db: AsyncSession, form_id: int):
-    stmt = select(FormField).where(FormField.form_id == form_id)
-    fields = await db.execute(stmt)
-    for field in fields:
-        await db.delete(field)
-    await db.commit()
 
 
 async def delete_form(db: AsyncSession, form_id: int):

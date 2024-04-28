@@ -1,7 +1,7 @@
 import json
 from typing import List
 
-from app.schemas import FormResponseGet, FormResponses
+from app.schemas import FormResponses
 from app.services import forms as crud
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException

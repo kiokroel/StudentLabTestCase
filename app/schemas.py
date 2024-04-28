@@ -1,5 +1,4 @@
 from datetime import datetime
-from enum import Enum
 from typing import List
 
 from pydantic import BaseModel, EmailStr
@@ -36,14 +35,14 @@ class FormFieldBase(BaseModel):
     options: List[str] | None = None
 
 
-class FormFieldGet(BaseModel):
+class FormFieldGet(FormFieldBase):
     id: int
 
 
 class FormGet(FormBase):
     id: int
     is_published: bool
-    fields: None | List[FormFieldBase]
+    fields: None | List[FormFieldGet]
 
 
 class FormAnswerBase(BaseModel):
