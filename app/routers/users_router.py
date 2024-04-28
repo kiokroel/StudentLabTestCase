@@ -20,7 +20,7 @@ async def create_user(user: schemas.UserCreate, session: AsyncSession = Depends(
     return new_user
 
 
-@router.get("{user_id}", response_model=schemas.UserCreate)
+@router.get("/{user_id}", response_model=schemas.UserBase)
 async def read_user(user_id: int, session: AsyncSession = Depends(get_db)):
     user = await crud.get_user(session, user_id=user_id)
     if user is None:

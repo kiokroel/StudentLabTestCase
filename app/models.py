@@ -1,7 +1,8 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey, Boolean
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped
 
 from database import Base
 
@@ -15,43 +16,53 @@ class User(Base):
     password = Column(String, nullable=False)
     date_registration = Column(TIMESTAMP, default=datetime.utcnow)
 
-    forms = relationship("Form", back_populates="owner")
-
 
 class Form(Base):
     __tablename__ = "forms"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, )
-    creator = Column(Integer, ForeignKey("users.id"))
+    title = Column(String(20), index=True)
+    description = Column(String)
+    creator_id = Column(Integer, ForeignKey("users.id"))
     is_published = Column(Boolean, default=False)
     data_create = Column(TIMESTAMP, default=datetime.utcnow)
     data_change = Column(TIMESTAMP, default=datetime.utcnow)
 
-    owner = relationship("User", back_populates="forms")
-    #questions = relationship("Question", back_populates="form")
+    fields: Mapped[List["FormField"]] = relationship("FormField", back_populates="form", lazy="selectin", cascade='all, delete')
 
 
-class Question(Base):
-    __tablename__ = "questions"
+class FormField(Base):
+    __tablename__ = "form_fields"
 
-    id = Column(Integer, primary_key=True)
-    text = Column(String, default=None)
-    form = Column(Integer, ForeignKey("forms.id"))
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, index=True)
+    field_type = Column(String, index=True)
+    options = Column(String, nullable=True)
+    form_id = Column(Integer, ForeignKey("forms.id"))
 
-
-class Result(Base):
-    __tablename__ = "results"
-
-    id = Column(Integer, primary_key=True)
-    user = Column(Integer, ForeignKey("users.id"))
-    form = Column(Integer, ForeignKey("forms.id"))
+    form = relationship("Form", back_populates="fields")
+    answers = relationship('FormAnswer', back_populates="field", cascade='all, delete')
 
 
-class Answer(Base):
-    __tablename__ = "answers"
+class FormResponse(Base):
+    __tablename__ = "form_responses"
 
     id = Column(Integer, primary_key=True)
-    result = Column(Integer, ForeignKey("answers.id"))
-    answer = Column(String)
+    form_id = Column(Integer, ForeignKey("forms.id"))
+    response_time = Column(TIMESTAMP, default=datetime.utcnow, index=True)
 
+    answers: Mapped[List["FormAnswer"]] = relationship("FormAnswer", back_populates="response", lazy="selectin", cascade='all, delete')
+
+
+class FormAnswer(Base):
+    __tablename__ = "form_answers"
+
+    id = Column(Integer, primary_key=True)
+    field_id = Column(Integer, ForeignKey("form_fields.id"))
+    response_id = Column(Integer, ForeignKey("form_responses.id"))
+    text_answer = Column(String, nullable=True)
+    selected_option = Column(String, nullable=True)
+    selected_options = Column(String, nullable=True)
+
+    response = relationship("FormResponse", back_populates="answers")
+    field = relationship("FormField", back_populates="answers")

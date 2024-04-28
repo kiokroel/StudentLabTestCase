@@ -1,3 +1,7 @@
+import datetime
+from enum import Enum
+from typing import List
+
 from pydantic import BaseModel, EmailStr
 
 
@@ -17,28 +21,47 @@ class User(UserBase):
         from_attributes = True
 
 
-class FieldBase(BaseModel):
-    question: str
-    type: str
-
-
 class FormBase(BaseModel):
-    name: str
-    fields: tuple[FieldBase]
+    title: str
+    description: str | None = None
 
 
 class FormCreate(FormBase):
     pass
 
 
-class Form(FormBase):
-    id: int
-    is_published: bool
-    owner_id: int
+class FormFieldBase(BaseModel):
+    name: str
+    field_type: str
+    options: List[str] | None = None
 
-    class Config:
-        from_attributes = True
+
+class FormFieldGet(BaseModel):
+    id: int
 
 
 class FormGet(FormBase):
+    id: int
+    is_published: bool
+    fields: None | List[FormFieldBase]
+
+
+class FormAnswerBase(BaseModel):
+    field_id: int
+    text_answer: str | None = None
+    selected_option: str | None = None
+    selected_options: List[str] | None = None
+
+
+class FormAnswerCreate(FormAnswerBase):
+    pass
+
+
+class FormResponseGet(BaseModel):
+    form_id: int
+    answers: None | List[FormAnswerCreate] = None
+
+
+class FormResponses(BaseModel):
+    #responses: List[FormResponseGet] | None
     pass
