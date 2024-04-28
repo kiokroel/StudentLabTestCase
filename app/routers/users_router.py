@@ -1,17 +1,17 @@
-from app import crud
-from app.database import get_db
+from app.services import users as crud
+from database import get_db
 from fastapi import APIRouter, Depends, HTTPException
 from app import schemas
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-users_router = APIRouter(
+router = APIRouter(
     prefix="/users",
     tags=["Пользователи"]
 )
 
 
-@users_router.post("", response_model=schemas.UserCreate)
+@router.post("", response_model=schemas.UserCreate)
 async def create_user(user: schemas.UserCreate, session: AsyncSession = Depends(get_db)):
     user_from_db = await crud.get_user_by_email(session, email=user.email)
     if user_from_db:
@@ -20,7 +20,7 @@ async def create_user(user: schemas.UserCreate, session: AsyncSession = Depends(
     return new_user
 
 
-@users_router.get("{user_id}", response_model=schemas.UserCreate)
+@router.get("/{user_id}", response_model=schemas.UserBase)
 async def read_user(user_id: int, session: AsyncSession = Depends(get_db)):
     user = await crud.get_user(session, user_id=user_id)
     if user is None:
