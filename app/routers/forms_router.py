@@ -1,6 +1,7 @@
 import json
 from typing import List
 
+from app.schemas import FormResponseGet, FormResponses
 from app.services import forms as crud
 from database import get_db
 from fastapi import APIRouter, Depends, HTTPException
@@ -92,8 +93,8 @@ async def delete_form(form_id: int, user_id: int, db: AsyncSession = Depends(get
     return form
 
 
-@router.get("/{form_id}/answers", response_model=schemas.FormResponses)
+@router.get("/{form_id}/answers", response_model=List[FormResponses])
 async def get_responses(form_id: int, user_id: int, db: AsyncSession = Depends(get_db)):
     await is_authorized(db, form_id=form_id, user_id=user_id)
-    responses = crud.get_responses(db, form_id=form_id)
+    responses = await crud.get_responses(db, form_id=form_id)
     return responses

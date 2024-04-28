@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 from enum import Enum
 from typing import List
 
@@ -62,6 +62,6 @@ class FormResponseGet(BaseModel):
     answers: None | List[FormAnswerCreate] = None
 
 
-class FormResponses(BaseModel):
-    #responses: List[FormResponseGet] | None
+class FormResponses(FormResponseGet):
+    response_time: datetime
     pass

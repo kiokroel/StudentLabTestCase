@@ -92,7 +92,7 @@ async def delete_response(db: AsyncSession, response_id: int):
     await db.commit()
 
 
-async def delete_field(db: AsyncSession, form_id: int):
+async def delete_fields(db: AsyncSession, form_id: int):
     stmt = select(FormField).where(FormField.form_id == form_id)
     fields = await db.execute(stmt)
     for field in fields:
@@ -109,7 +109,7 @@ async def delete_form(db: AsyncSession, form_id: int):
 async def get_responses(db: AsyncSession, form_id: int):
     stmt = select(FormResponse).where(FormResponse.form_id == form_id)
     result = await db.execute(stmt)
-    responses: List[FormResponse] | None = result.scalar()
+    responses: List[FormResponse] | None = result.scalars().all()
     for response in responses:
         for answer in response.answers:
             answer.selected_options = json.loads(answer.selected_options)

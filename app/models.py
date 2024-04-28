@@ -28,7 +28,10 @@ class Form(Base):
     data_create = Column(TIMESTAMP, default=datetime.utcnow)
     data_change = Column(TIMESTAMP, default=datetime.utcnow)
 
-    fields: Mapped[List["FormField"]] = relationship("FormField", back_populates="form", lazy="selectin", cascade='all, delete')
+    fields: Mapped[List["FormField"]] = relationship("FormField", back_populates="form", lazy="selectin",
+                                                     cascade='all, delete', passive_deletes=True)
+    responses: Mapped[List["FormResponse"]] = relationship("FormResponse", back_populates="form", lazy="selectin",
+                                                     cascade='all, delete', passive_deletes=True)
 
 
 class FormField(Base):
@@ -41,7 +44,7 @@ class FormField(Base):
     form_id = Column(Integer, ForeignKey("forms.id"))
 
     form = relationship("Form", back_populates="fields")
-    answers = relationship('FormAnswer', back_populates="field", cascade='all, delete')
+    answers = relationship('FormAnswer', back_populates="field", lazy="selectin", cascade='all, delete', passive_deletes=True)
 
 
 class FormResponse(Base):
@@ -51,7 +54,8 @@ class FormResponse(Base):
     form_id = Column(Integer, ForeignKey("forms.id"))
     response_time = Column(TIMESTAMP, default=datetime.utcnow, index=True)
 
-    answers: Mapped[List["FormAnswer"]] = relationship("FormAnswer", back_populates="response", lazy="selectin", cascade='all, delete')
+    answers: Mapped[List["FormAnswer"]] = relationship("FormAnswer", back_populates="response", lazy="selectin", cascade='all, delete', passive_deletes=True)
+    form = relationship("Form", back_populates="responses")
 
 
 class FormAnswer(Base):
