@@ -29,14 +29,22 @@ class FormCreate(FormBase):
     pass
 
 
+class FormFieldOptionBase(BaseModel):
+    option: str
+
+
 class FormFieldBase(BaseModel):
     name: str
-    field_type: str
-    options: List[str] | None = None
+
+
+class FormFieldCreate(FormFieldBase):
+    options: List[str]
 
 
 class FormFieldGet(FormFieldBase):
     id: int
+    field_type: str
+    options: List[FormFieldOptionBase] | None = None
 
 
 class FormGet(FormBase):
@@ -47,18 +55,20 @@ class FormGet(FormBase):
 
 class FormAnswerBase(BaseModel):
     field_id: int
-    text_answer: str | None = None
-    selected_option: str | None = None
-    selected_options: List[str] | None = None
+    answer: str | None = None
 
 
 class FormAnswerCreate(FormAnswerBase):
     pass
 
 
+class FormAnswerGet(FormAnswerBase):
+    field: FormFieldGet
+
+
 class FormResponseGet(BaseModel):
     form_id: int
-    answers: None | List[FormAnswerCreate] = None
+    answers: None | List[FormAnswerGet] = None
 
 
 class FormResponses(FormResponseGet):

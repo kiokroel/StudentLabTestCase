@@ -1,8 +1,7 @@
-import json
 from typing import List
 
 from app import schemas, models
-from app.models import Form, FormField, FormResponse
+from app.models import Form, FormResponse
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,21 +21,21 @@ async def create_form(db: AsyncSession, form: schemas.FormCreate, creator_id: in
     return db_form
 
 
-async def create_field(db: AsyncSession, field: schemas.FormFieldBase, form_id: int):
-    options_str = json.dumps(field.options)
-    db_field = models.FormField(name=field.name, field_type=field.field_type, options=options_str, form_id=form_id)
+async def create_options(db: AsyncSession, options: List[str], field_id: int):
+    for option in options:
+        db_option = models.FormFieldOption(field_id=field_id, option=option)
+        db.add(db_option)
+    await db.commit()
+        
+
+async def create_field(db: AsyncSession, field: schemas.FormFieldCreate, form_id: int, field_type: str):
+    db_field = models.FormField(name=field.name, field_type=field_type, form_id=form_id)
     db.add(db_field)
     await db.commit()
     await db.refresh(db_field)
-    db_field.options = json.loads(db_field.options)
+    await create_options(db, field.options, field_id=db_field.id)
+    await db.refresh(db_field)
     return db_field
-
-
-async def get_fields(db: AsyncSession, form_id: int):
-    stmt = select(FormField).where(FormField.form_id == form_id)
-    result = await db.execute(stmt)
-    fields: List[FormField] | None = result.scalar()
-    return fields
 
 
 async def create_response(db: AsyncSession, form_id: int):
@@ -49,11 +48,8 @@ async def create_response(db: AsyncSession, form_id: int):
 
 async def create_answers(db: AsyncSession, answers: List[schemas.FormAnswerCreate], response_id: int):
     for answer in answers:
-        selected_options_str = json.dumps(answer.selected_options)
         db_answer = models.FormAnswer(**answer.dict(), response_id=response_id)
-        db_answer.selected_options = selected_options_str
         db.add(db_answer)
-
     await db.commit()
 
 
@@ -85,7 +81,4 @@ async def get_responses(db: AsyncSession, form_id: int):
     stmt = select(FormResponse).where(FormResponse.form_id == form_id)
     result = await db.execute(stmt)
     responses: List[FormResponse] | None = result.scalars().all()
-    for response in responses:
-        for answer in response.answers:
-            answer.selected_options = json.loads(answer.selected_options)
     return responses
