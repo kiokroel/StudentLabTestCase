@@ -68,9 +68,8 @@ class FormAnswerGet(FormAnswerBase):
 
 class FormResponseGet(BaseModel):
     form_id: int
-    answers: None | List[FormAnswerGet] = None
+    answers: None | List[FormAnswerGet]
 
 
 class FormResponses(FormResponseGet):
     response_time: datetime
-    pass

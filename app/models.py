@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 
-from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey, Boolean
+from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey, Boolean, LargeBinary
 from sqlalchemy.orm import relationship, Mapped
 
 from database import Base
@@ -13,7 +13,7 @@ class User(Base):
     id = Column(Integer, primary_key=True)
     email = Column(String(30), unique=True, nullable=False, index=True)
     username = Column(String(30), nullable=False, index=True)
-    password = Column(String, nullable=False)
+    password = Column(LargeBinary, nullable=False)
     date_registration = Column(TIMESTAMP, default=datetime.utcnow)
 
 

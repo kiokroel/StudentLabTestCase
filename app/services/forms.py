@@ -75,6 +75,7 @@ async def delete_form(db: AsyncSession, form_id: int):
     form = await get_form(db, form_id=form_id)
     await db.delete(form)
     await db.commit()
+    return form
 
 
 async def get_responses(db: AsyncSession, form_id: int):
