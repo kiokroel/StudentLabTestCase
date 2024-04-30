@@ -73,4 +73,3 @@ class FormResponseGet(BaseModel):
 
 class FormResponses(FormResponseGet):
     response_time: datetime
-    pass
