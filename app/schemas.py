@@ -68,7 +68,7 @@ class FormAnswerGet(FormAnswerBase):
 
 class FormResponseGet(BaseModel):
     form_id: int
-    answers: None | List[FormAnswerGet]
+    answers: None | List[FormAnswerGet] = None
 
 
 class FormResponses(FormResponseGet):
