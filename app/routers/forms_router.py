@@ -33,7 +33,7 @@ async def get_form(form_id: int, db: AsyncSession = Depends(get_db)):
 
 
 @router.post("", response_model=schemas.FormGet)
-async def create_form(form: schemas.FormCreate, db: AsyncSession = Depends(get_db),
+async def create_form(form: schemas.FormCreate = Depends(), db: AsyncSession = Depends(get_db),
                       user: User = Depends(get_current_auth_user)):
     creator_id = user.id
     new_form = await crud.create_form(db=db, form=form, creator_id=creator_id)
