@@ -22,4 +22,5 @@ async def create_user(db: AsyncSession, user: schemas.UserCreate):
     db_user = models.User(**user.model_dump())
     db.add(db_user)
     await db.commit()
-    return user
+    await db.refresh(db_user)
+    return db_user
