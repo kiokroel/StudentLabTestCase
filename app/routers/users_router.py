@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 
-@router.post("", response_model=schemas.UserCreate)
+@router.post("", response_model=schemas.User)
 async def create_user(user: schemas.UserCreate = Depends(), db: AsyncSession = Depends(get_db)):
     user_from_db = await crud.get_user_by_email(db, email=user.email)
     if user_from_db:
