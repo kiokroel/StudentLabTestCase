@@ -13,6 +13,13 @@ async def get_form(db: AsyncSession, form_id: int):
     return form
 
 
+async def get_forms_by_user(db: AsyncSession, user_id: int):
+    stmt = select(Form).where(Form.creator_id == user_id)
+    result = await db.execute(stmt)
+    form: List[Form] | None = result.scalars().all()
+    return form
+
+
 async def create_form(db: AsyncSession, form: schemas.FormCreate, creator_id: int):
     db_form = models.Form(**form.dict(), creator_id=creator_id)
     db.add(db_form)

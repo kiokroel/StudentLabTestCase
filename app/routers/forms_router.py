@@ -32,6 +32,14 @@ async def get_form(form_id: int, db: AsyncSession = Depends(get_db)):
     return form
 
 
+@router.get("/", response_model=List[schemas.FormGet])
+async def get_my_forms(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_auth_user)):
+    forms = await crud.get_forms_by_user(db, user_id=user.id)
+    if forms is None:
+        raise HTTPException(status_code=404, detail="Form not found")
+    return forms
+
+
 @router.post("", response_model=schemas.FormGet)
 async def create_form(form: schemas.FormCreate = Depends(), db: AsyncSession = Depends(get_db),
                       user: User = Depends(get_current_auth_user)):
