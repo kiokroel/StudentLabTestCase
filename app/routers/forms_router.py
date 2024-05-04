@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List
+from typing import List, Literal
 
 from app.schemas import FormResponses, User
 from app.services import forms as crud
@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-async def is_authorized(db, form_id, user_id) -> True or Exception:
+async def is_authorized(db, form_id, user_id) -> Literal[True]:
     form = await crud.get_form(db, form_id=form_id)
     if form is None:
         raise HTTPException(status_code=404, detail="Form not found")

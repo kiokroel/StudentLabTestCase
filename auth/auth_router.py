@@ -23,7 +23,8 @@ class TokenInfo(BaseModel):
 router = APIRouter(prefix="/auth", tags=["Авторизация"])
 
 
-async def validate_auth_user(username: str = Form(), password: str = Form(), db: AsyncSession = Depends(get_db)):
+async def validate_auth_user(username: str = Form(), password: str = Form(), db: AsyncSession = Depends(get_db)
+                             ) -> User | Exception:
     email = username
     unauthed_exc = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
