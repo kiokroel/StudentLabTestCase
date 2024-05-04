@@ -9,7 +9,7 @@ services:
       - .env-non-dev
     command: [ "/src/docker/app.sh" ]
     ports:
-      - 9999:8000
+      - "9999:8000"
     depends_on:
       - db
 
