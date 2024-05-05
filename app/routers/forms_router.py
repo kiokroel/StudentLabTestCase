@@ -99,7 +99,7 @@ async def delete_form(form_id: int, db: AsyncSession = Depends(get_db),
         return await crud.delete_form(db, form_id=form_id)
 
 
-@router.get("/{form_id}/answers", response_model=List[FormResponses])
+@router.get("/{form_id}/responses", response_model=List[FormResponses])
 async def get_responses(form_id: int, db: AsyncSession = Depends(get_db),
                         user: User = Depends(get_current_auth_user)):
     if await is_authorized(db, form_id=form_id, user_id=user.id):
