@@ -5,6 +5,7 @@
 .mypy_cache
 .vscode
 .env
+.env-non-dev
 __pycache__
 .pytest_cache
 htmlcov
@@ -26,6 +27,8 @@ archive.zip
 pyvenv.cfg
 Lib
 Scripts
+certs
+
 
 # vim temporary files
 *~
