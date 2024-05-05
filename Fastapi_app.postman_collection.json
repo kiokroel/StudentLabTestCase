@@ -1,0 +1,614 @@
+{
+	"info": {
+		"_postman_id": "4c1f0c34-78fe-4a91-a3b7-165877157f2b",
+		"name": "Fastapi_app",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create_User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {  \r",
+							"    var responseBody = pm.response.json(); \r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"detail\") && body.detail === \"Email already registered\") ||\r",
+							"            (body.hasOwnProperty(\"email\") && body.hasOwnProperty(\"username\") && body.hasOwnProperty(\"id\"))\r",
+							"        );\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/users?email=userPostman@test.com&username=Postman&password=PostmanTest",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"users"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "userPostman@test.com"
+						},
+						{
+							"key": "username",
+							"value": "Postman"
+						},
+						{
+							"key": "password",
+							"value": "PostmanTest"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User_Info",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {  \r",
+							"    var responseBody = pm.response.json(); \r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        if (pm.expect(pm.response.code).to.equal(200)){\r",
+							"            return body.hasOwnProperty(\"email\") && body.hasOwnProperty(\"username\")\r",
+							"        };\r",
+							"        if (pm.expect(pm.response.code).to.equal(401)){\r",
+							"            return (body.hasOwnProperty(\"detail\") && body.detail === \"Not authenticated\")\r",
+							"        };\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/auth/users/me/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"auth",
+						"users",
+						"me",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Form",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"\r",
+							"    pm.environment.set(\"form_id\", responseBody.id);\r",
+							"\r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"title\") && body.hasOwnProperty(\"description\") && body.hasOwnProperty(\"id\")) && body.hasOwnProperty(\"is_published\") && body.hasOwnProperty(\"fields\")\r",
+							"        );\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/forms?title=PostmanForm&description=Test Form ",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms"
+					],
+					"query": [
+						{
+							"key": "title",
+							"value": "PostmanForm"
+						},
+						{
+							"key": "description",
+							"value": "Test Form "
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get My Forms",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"    pm.test(\"Response body is an array\", function () {\r",
+							"    pm.expect(Array.isArray(responseBody)).to.be.true;\r",
+							"});\r",
+							"    if (responseBody.length > 0) {\r",
+							"        var firstItem = responseBody[0];\r",
+							"        pm.test(\"Fields of the first item\", function () {\r",
+							"            pm.expect(firstItem).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"title\") && body.hasOwnProperty(\"description\") && body.hasOwnProperty(\"id\")) && body.hasOwnProperty(\"is_published\") && body.hasOwnProperty(\"fields\")\r",
+							"        );\r",
+							"    });\r",
+							"        });\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/forms/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Form",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"\r",
+							"    pm.environment.set(\"form_id\", responseBody.id);\r",
+							"\r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"title\") && body.hasOwnProperty(\"description\") && body.hasOwnProperty(\"id\")) && body.hasOwnProperty(\"is_published\") && body.hasOwnProperty(\"fields\")\r",
+							"        );\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/forms/{{form_id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						"{{form_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add field",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"\r",
+							"    pm.environment.set(\"field_id\", responseBody.id);\r",
+							"\r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"name\") && body.hasOwnProperty(\"options\") && body.hasOwnProperty(\"field_type\")) && body.hasOwnProperty(\"id\")\r",
+							"        );\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"string\",\r\n  \"options\": [\r\n    \"string\"\r\n  ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/forms/{{form_id}}/fields?field_type=text",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						"{{form_id}}",
+						"fields"
+					],
+					"query": [
+						{
+							"key": "field_type",
+							"value": "text"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Form Response",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"    \r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"form_id\") && body.hasOwnProperty(\"answers\"))\r",
+							"        );\r",
+							"    });\r",
+							"\r",
+							"    pm.test(\"Answers body is an array\", function () {\r",
+							"    pm.expect(Array.isArray(responseBody.answers)).to.be.true;\r",
+							"});\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "[\r\n  {\r\n    \"field_id\": {{field_id}},\r\n    \"answer\": \"string\"\r\n  }\r\n]",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/forms/{{form_id}}/responses",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						"{{form_id}}",
+						"responses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Responses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"    pm.test(\"Response body is an array\", function () {\r",
+							"    pm.expect(Array.isArray(responseBody)).to.be.true;\r",
+							"});\r",
+							"    if (responseBody.length > 0) {\r",
+							"        var firstItem = responseBody[0];\r",
+							"        pm.test(\"Fields of the first item\", function () {\r",
+							"            pm.expect(firstItem).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"form_id\") && body.hasOwnProperty(\"answers\") && body.hasOwnProperty(\"response_time\"))\r",
+							"        );\r",
+							"    });\r",
+							"        });\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/forms/{{form_id}}/responses",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						"{{form_id}}",
+						"responses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Publish Form",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"\r",
+							"    pm.environment.set(\"form_id\", responseBody.id);\r",
+							"\r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"title\") && body.hasOwnProperty(\"description\") && body.hasOwnProperty(\"id\")) && body.hasOwnProperty(\"is_published\") && body.hasOwnProperty(\"fields\") && body.is_published == true\r",
+							"        );\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/forms/{{form_id}}/publish",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						"{{form_id}}",
+						"publish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unpublish Form",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"\r",
+							"    pm.environment.set(\"form_id\", responseBody.id);\r",
+							"\r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"title\") && body.hasOwnProperty(\"description\") && body.hasOwnProperty(\"id\")) && body.hasOwnProperty(\"is_published\") && body.hasOwnProperty(\"fields\") && body.is_published == false\r",
+							"        );\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/forms/{{form_id}}/unpublish",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						"{{form_id}}",
+						"unpublish"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Form",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Check response body\", function () {\r",
+							"    pm.expect(pm.response.code).to.equal(200)\r",
+							"    var responseBody = pm.response.json();\r",
+							"\r",
+							"    pm.environment.set(\"form_id\", responseBody.id);\r",
+							"\r",
+							"    pm.expect(responseBody).to.satisfy(function (body) {\r",
+							"        return (\r",
+							"            (body.hasOwnProperty(\"title\") && body.hasOwnProperty(\"description\") && body.hasOwnProperty(\"id\")) && body.hasOwnProperty(\"is_published\") && body.hasOwnProperty(\"fields\")\r",
+							"        );\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/forms/{{form_id}}/delete",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"forms",
+						"{{form_id}}",
+						"delete"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "oauth2",
+		"oauth2": [
+			{
+				"key": "tokenType",
+				"value": "Bearer",
+				"type": "string"
+			},
+			{
+				"key": "accessToken",
+				"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyUG9zdG1hbkB0ZXN0LmNvbSIsInVzZXJuYW1lIjoiUG9zdG1hbiIsImVtYWlsIjoidXNlclBvc3RtYW5AdGVzdC5jb20iLCJleHAiOjE3MTQ3MzA3NTUsImlhdCI6MTcxNDcyOTg1NX0.ACQHb2HNUAS3vlJtgV3Ol_IsH-1gHx4rNxRIfgWAsMD3mmTzgLTiEjlZfDpyOKrviAM12lDv47Yjx5DpIz0ZaeDYo66NTZRQwXEC0Xh3nKvCJAaeHHBdMTC1gJFYIs7KsQFXvDzznHISUagex5KqH0xDY-2rcFbv3BRtOdcS9Ic",
+				"type": "string"
+			},
+			{
+				"key": "addTokenTo",
+				"value": "header",
+				"type": "string"
+			},
+			{
+				"key": "client_authentication",
+				"value": "body",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "PostmanTest",
+				"type": "string"
+			},
+			{
+				"key": "username",
+				"value": "userPostman@test.com",
+				"type": "string"
+			},
+			{
+				"key": "grant_type",
+				"value": "password_credentials",
+				"type": "string"
+			},
+			{
+				"key": "useBrowser",
+				"value": false,
+				"type": "boolean"
+			},
+			{
+				"key": "accessTokenUrl",
+				"value": "http://127.0.0.1:8000/auth/login/",
+				"type": "string"
+			},
+			{
+				"key": "authUrl",
+				"value": "http://127.0.0.1:8000/auth/login/",
+				"type": "string"
+			},
+			{
+				"key": "tokenName",
+				"value": "qwe",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"pm.sendRequest({",
+					"    url: \"http://127.0.0.1:8000/users?email=userPostman@test.com&username=Postman&password=PostmanTest\",",
+					"    method: 'POST',",
+					"    header: {",
+					"        'Content-Type': 'application/json'",
+					"    },",
+					"}, function (err, response) {",
+					"    console.log(response.json());",
+					"});",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
