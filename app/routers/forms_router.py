@@ -70,6 +70,9 @@ async def create_form_response(answers: List[schemas.FormAnswerCreate], form_id:
     form = await crud.get_form(db, form_id=form_id)
     if form is None:
         raise HTTPException(status_code=404, detail="Form not found")
+    for answer in answers:
+        if not await crud.get_field(db, field_id=answer.field_id):
+            raise HTTPException(status_code=404, detail="Field not found")
     response = await crud.create_response(db, form_id=form_id)
     await crud.create_answers(db, answers=answers, response_id=response.id)
     await db.refresh(response)

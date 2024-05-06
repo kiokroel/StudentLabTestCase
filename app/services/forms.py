@@ -1,4 +1,4 @@
-from typing import List, NoReturn, Sequence
+from typing import List, Sequence
 
 from app import schemas
 from app.models import Form, FormResponse, FormFieldOption, FormField, FormAnswer
@@ -90,3 +90,10 @@ async def get_responses(db: AsyncSession, form_id: int) -> Sequence[FormResponse
     result = await db.execute(stmt)
     responses: Sequence[FormResponse] | None = result.scalars().all()
     return responses
+
+
+async def get_field(db: AsyncSession, field_id: int) -> FormField:
+    stmt = select(FormField).where(FormField.id == field_id)
+    result = await db.execute(stmt)
+    field: FormField | None = result.scalar_one_or_none()
+    return field
